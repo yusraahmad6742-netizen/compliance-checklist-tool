@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Security Compliance Checklist — CIS Controls v8 (IG1)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@400;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#16232D;
+    --paper:#EDF1EE;
+    --panel:#FBFDFC;
+    --line:#C7CDC5;
+    --line-soft:#DDE3DE;
+    --safe:#1F7A5C;
+    --safe-bg:#E5F1EB;
+    --warn:#96700F;
+    --warn-bg:#F5EBD4;
+    --risk:#A23B3B;
+    --risk-bg:#F4E1DE;
+    --muted:#5C6B64;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'IBM Plex Sans',sans-serif;
+    line-height:1.5;
+  }
+  h1,h2,h3{
+    font-family:'Zilla Slab',serif;
+    margin:0;
+  }
+  .mono{font-family:'IBM Plex Mono',monospace;}
+
+  header.masthead{
+    background:var(--ink);
+    color:var(--paper);
+    padding:28px 32px 24px;
+    border-bottom:4px solid var(--safe);
+  }
+  header.masthead .eyebrow{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12.5px;
+    color:#9FB3AA;
+    letter-spacing:0.02em;
+  }
+  header.masthead h1{
+    font-size:28px;
+    font-weight:600;
+    margin-top:4px;
+    max-width:640px;
+  }
+  header.masthead p{
+    color:#C4D0CA;
+    max-width:560px;
+    font-size:14.5px;
+    margin-top:8px;
+  }
+
+  .layout{
+    display:grid;
+    grid-template-columns:260px 1fr;
+    gap:0;
+    max-width:1100px;
+    margin:0 auto;
+    align-items:start;
+  }
+  @media (max-width:820px){
+    .layout{grid-template-columns:1fr;}
+    .rail{position:static !important; order:2;}
+  }
+
+  .rail{
+    position:sticky;
+    top:0;
+    padding:28px 20px;
+    border-right:1px solid var(--line);
+    min-height:100vh;
+  }
+  .rail .field{margin-bottom:18px;}
+  .rail label{
+    display:block;
+    font-size:12px;
+    color:var(--muted);
+    margin-bottom:4px;
+  }
+  .rail input[type=text], .rail input[type=date]{
+    width:100%;
+    padding:8px 9px;
+    border:1px solid var(--line);
+    border-radius:2px;
+    background:var(--panel);
+    font-family:'IBM Plex Sans',sans-serif;
+    font-size:14px;
+  }
+  .score-meter{
+    margin-top:22px;
+    padding-top:18px;
+    border-top:1px solid var(--line);
+  }
+  .score-meter .num{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:34px;
+    font-weight:600;
+  }
+  .score-meter .label{
+    font-size:12.5px;
+    color:var(--muted);
+  }
+  .cat-progress{margin-top:16px;}
+  .cat-row{
+    display:flex;
+    justify-content:space-between;
+    font-size:12.5px;
+    margin-bottom:6px;
+    color:var(--muted);
+  }
+  .cat-row .done{color:var(--ink); font-family:'IBM Plex Mono',monospace;}
+  .sample-btns{margin-top:20px; display:flex; flex-direction:column; gap:6px;}
+  .sample-btns button, .rail .reset-btn{
+    font-family:'IBM Plex Sans',sans-serif;
+    font-size:12.5px;
+    padding:7px 10px;
+    border:1px solid var(--line);
+    background:var(--panel);
+    border-radius:2px;
+    cursor:pointer;
+    text-align:left;
+  }
+  .sample-btns button:hover, .rail .reset-btn:hover{border-color:var(--ink);}
+
+  main{padding:28px 32px 60px;}
+  .category-block{margin-bottom:30px;}
+  .category-block h2{
+    font-size:19px;
+    padding-bottom:8px;
+    border-bottom:2px solid var(--ink);
+    margin-bottom:14px;
+  }
+  .control-card{
+    display:grid;
+    grid-template-columns:56px 1fr;
+    gap:14px;
+    padding:14px 0;
+    border-bottom:1px solid var(--line-soft);
+  }
+  .control-card .code{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:13px;
+    color:var(--muted);
+    padding-top:2px;
+  }
+  .control-card .text{
+    font-size:15px;
+    max-width:62ch;
+  }
+  .pills{
+    margin-top:10px;
+    display:flex;
+    gap:8px;
+  }
+  .pill{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12.5px;
+    padding:6px 12px;
+    border:1px solid var(--line);
+    border-radius:2px;
+    background:var(--panel);
+    cursor:pointer;
+    color:var(--muted);
+  }
+  .pill.active-yes{background:var(--safe-bg); border-color:var(--safe); color:var(--safe);}
+  .pill.active-partial{background:var(--warn-bg); border-color:var(--warn); color:var(--warn);}
+  .pill.active-no{background:var(--risk-bg); border-color:var(--risk); color:var(--risk);}
+
+  .generate-bar{
+    margin-top:10px;
+    padding-top:20px;
+    border-top:1px solid var(--line);
+    display:flex;
+    align-items:center;
+    gap:14px;
+  }
+  .generate-bar button{
+    font-family:'IBM Plex Sans',sans-serif;
+    font-weight:500;
+    font-size:14.5px;
+    padding:11px 22px;
+    background:var(--ink);
+    color:var(--paper);
+    border:none;
+    border-radius:2px;
+    cursor:pointer;
+  }
+  .generate-bar button:disabled{background:#8C9992; cursor:not-allowed;}
+  .generate-note{font-size:12.5px; color:var(--muted);}
+
+  /* Report view */
+  #report{display:none;}
+  .report-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-end;
+    border-bottom:3px solid var(--ink);
+    padding-bottom:16px;
+    margin-bottom:24px;
+  }
+  .band-badge{
+    display:inline-block;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:13px;
+    padding:4px 10px;
+    border-radius:2px;
+    margin-top:6px;
+  }
+  .band-mature{background:var(--safe-bg); color:var(--safe);}
+  .band-developing{background:var(--warn-bg); color:var(--warn);}
+  .band-atrisk{background:var(--risk-bg); color:var(--risk);}
+
+  .overall-score{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:56px;
+    font-weight:600;
+    text-align:right;
+  }
+  .cat-bars{margin:22px 0 30px;}
+  .cat-bar-row{margin-bottom:14px;}
+  .cat-bar-row .top{
+    display:flex;
+    justify-content:space-between;
+    font-size:13.5px;
+    margin-bottom:5px;
+  }
+  .bar-track{
+    height:10px;
+    background:var(--line-soft);
+    border-radius:2px;
+    overflow:hidden;
+  }
+  .bar-fill{height:100%;}
+
+  .roadmap h3{font-size:17px; margin-bottom:12px;}
+  .rmd-item{
+    display:grid;
+    grid-template-columns:70px 1fr;
+    gap:14px;
+    padding:12px 0;
+    border-bottom:1px solid var(--line-soft);
+    font-size:14.5px;
+  }
+  .rmd-item .code{font-family:'IBM Plex Mono',monospace; font-size:12.5px; color:var(--muted);}
+  .rmd-item .status{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11.5px;
+    text-transform:lowercase;
+    padding:1px 6px;
+    border-radius:2px;
+    margin-left:8px;
+  }
+  .status-no{background:var(--risk-bg); color:var(--risk);}
+  .status-partial{background:var(--warn-bg); color:var(--warn);}
+  .rmd-fix{color:var(--muted); font-size:13px; margin-top:3px;}
+
+  .report-actions{
+    margin-top:28px;
+    display:flex;
+    gap:12px;
+  }
+  .report-actions button{
+    font-family:'IBM Plex Sans',sans-serif;
+    font-size:13.5px;
+    padding:9px 16px;
+    border:1px solid var(--ink);
+    background:var(--panel);
+    border-radius:2px;
+    cursor:pointer;
+  }
+
+  @media print{
+    header.masthead, .rail, .generate-bar, .report-actions, #checklist{display:none !important;}
+    #report{display:block !important;}
+    body{background:#fff;}
+    main{padding:0;}
+  }
+</style>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="eyebrow">SafeX — Blue Team / Compliance Tool</div>
+  <h1>Security Compliance Checklist</h1>
+  <p>Self-assessment against 16 controls from CIS Controls v8, Implementation Group 1 — the baseline "essential cyber hygiene" tier for organizations with limited security resources.</p>
+</header>
+
+<div class="layout">
+  <div class="rail">
+    <div class="field">
+      <label for="bizName">Business name</label>
+      <input type="text" id="bizName" placeholder="e.g. Riverside Bakery">
+    </div>
+    <div class="field">
+      <label for="assessDate">Assessment date</label>
+      <input type="date" id="assessDate">
+    </div>
+
+    <div class="score-meter">
+      <div class="num mono" id="liveScore">0%</div>
+      <div class="label">controls answered: <span id="answeredCount" class="mono">0</span>/16</div>
+    </div>
+
+    <div class="cat-progress" id="catProgress"></div>
+
+    <div class="sample-btns">
+      <button onclick="loadSample('mature')">Load sample: mature business</button>
+      <button onclick="loadSample('weak')">Load sample: weak business</button>
+      <button class="reset-btn" onclick="resetAll()">Clear all answers</button>
+    </div>
+  </div>
+
+  <main>
+    <div id="checklist"></div>
+
+    <div class="generate-bar">
+      <button id="genBtn" disabled onclick="generateReport()">Generate report</button>
+      <span class="generate-note">Answer all 16 controls to generate the scored report.</span>
+    </div>
+
+    <div id="report"></div>
+  </main>
+</div>
+
+<script>
+const controls = [
+  {id:'AC-01', category:'Access Control', text:'Every user has a unique login — no shared or generic accounts.', fix:'Retire shared logins; issue individual accounts per person.'},
+  {id:'AC-02', category:'Access Control', text:'Multi-factor authentication is required for email, admin panels, and remote access.', fix:'Enable MFA on email and any admin or remote-access login first.'},
+  {id:'AC-03', category:'Access Control', text:'Default passwords have been changed on all devices and software.', fix:'Audit routers, printers, and admin panels for factory-default credentials.'},
+  {id:'AC-04', category:'Access Control', text:'Access is revoked promptly when someone leaves or changes roles.', fix:"Add an offboarding step that disables accounts on a person's last day."},
+
+  {id:'BK-01', category:'Backup', text:'Critical data is backed up automatically on a regular schedule.', fix:'Set up an automated daily or weekly backup job — remove reliance on manual copies.'},
+  {id:'BK-02', category:'Backup', text:'Backups are stored somewhere separate from the original data (offsite or cloud).', fix:'Replicate backups to a cloud location or offsite drive, not the same premises.'},
+  {id:'BK-03', category:'Backup', text:'A backup has been test-restored at least once in the past year.', fix:'Run a test restore and confirm the data actually comes back intact.'},
+  {id:'BK-04', category:'Backup', text:'Backups are encrypted.', fix:'Turn on encryption at rest for the backup destination.'},
+
+  {id:'NW-01', category:'Network', text:'A firewall is active at the network perimeter.', fix:'Enable and configure the firewall on the router/gateway device.'},
+  {id:'NW-02', category:'Network', text:'Wi-Fi uses WPA2/WPA3 encryption with a strong passphrase.', fix:'Switch the network to WPA2/WPA3 and set a long, unique passphrase.'},
+  {id:'NW-03', category:'Network', text:'Guest Wi-Fi is separated from the business network.', fix:'Create a separate guest SSID with no access to internal systems.'},
+  {id:'NW-04', category:'Network', text:'Operating systems and software are patched on a regular schedule.', fix:'Turn on automatic updates or set a monthly patch window.'},
+
+  {id:'AW-01', category:'Awareness', text:'Staff have received basic phishing and security-awareness training.', fix:'Run a short annual training session, even a 30-minute one.'},
+  {id:'AW-02', category:'Awareness', text:'A written password policy exists (length, complexity, reuse rules).', fix:'Write a one-page password policy and share it with staff.'},
+  {id:'AW-03', category:'Awareness', text:'An incident-response contact or plan exists for reporting a breach.', fix:'Name who to call and write a short one-page response plan.'},
+  {id:'AW-04', category:'Awareness', text:'A policy governs the use of removable media (USB drives, etc.).', fix:'Set a simple rule for scanning or restricting USB drives.'}
+];
+const categories = ['Access Control','Backup','Network','Awareness'];
+const catWeight = {'Access Control':1,'Backup':2,'Network':3,'Awareness':4};
+const answers = {};
+
+function renderChecklist(){
+  const root = document.getElementById('checklist');
+  root.innerHTML = '';
+  categories.forEach(cat=>{
+    const block = document.createElement('div');
+    block.className = 'category-block';
+    const h2 = document.createElement('h2');
+    h2.textContent = cat;
+    block.appendChild(h2);
+    controls.filter(c=>c.category===cat).forEach(c=>{
+      const card = document.createElement('div');
+      card.className = 'control-card';
+      card.innerHTML = `
+        <div class="code">${c.id}</div>
+        <div>
+          <div class="text">${c.text}</div>
+          <div class="pills" data-id="${c.id}">
+            <div class="pill" data-val="yes" onclick="setAnswer('${c.id}','yes')">yes</div>
+            <div class="pill" data-val="partial" onclick="setAnswer('${c.id}','partial')">partial</div>
+            <div class="pill" data-val="no" onclick="setAnswer('${c.id}','no')">no</div>
+          </div>
+        </div>`;
+      block.appendChild(card);
+    });
+    root.appendChild(block);
+  });
+}
+
+function setAnswer(id, val){
+  answers[id] = val;
+  refreshPills();
+  refreshMeter();
+}
+
+function refreshPills(){
+  controls.forEach(c=>{
+    const group = document.querySelector(`.pills[data-id="${c.id}"]`);
+    if(!group) return;
+    group.querySelectorAll('.pill').forEach(p=>{
+      p.className = 'pill' + (answers[c.id]===p.dataset.val ? ' active-'+p.dataset.val : '');
+    });
+  });
+}
+
+function scoreOf(val){ return val==='yes'?2 : val==='partial'?1 : 0; }
+
+function refreshMeter(){
+  const answeredIds = Object.keys(answers);
+  document.getElementById('answeredCount').textContent = answeredIds.length;
+  let total=0;
+  controls.forEach(c=>{ if(answers[c.id]) total += scoreOf(answers[c.id]); });
+  const pct = Math.round((total / (controls.length*2)) * 100);
+  document.getElementById('liveScore').textContent = pct + '%';
+
+  const catBox = document.getElementById('catProgress');
+  catBox.innerHTML = '';
+  categories.forEach(cat=>{
+    const items = controls.filter(c=>c.category===cat);
+    const answered = items.filter(c=>answers[c.id]).length;
+    const row = document.createElement('div');
+    row.className='cat-row';
+    row.innerHTML = `<span>${cat}</span><span class="done">${answered}/${items.length}</span>`;
+    catBox.appendChild(row);
+  });
+
+  document.getElementById('genBtn').disabled = answeredIds.length < controls.length;
+}
+
+function loadSample(kind){
+  controls.forEach(c=>{
+    if(kind==='mature'){
+      answers[c.id] = (c.id==='AW-04' || c.id==='NW-03') ? 'partial' : 'yes';
+    } else {
+      answers[c.id] = ['AC-01','BK-01','NW-01','NW-02'].includes(c.id) ? 'partial' : 'no';
+    }
+  });
+  document.getElementById('bizName').value = kind==='mature' ? 'Riverside Bakery' : 'Corner Hardware Co.';
+  document.getElementById('assessDate').valueAsDate = new Date();
+  refreshPills();
+  refreshMeter();
+}
+
+function resetAll(){
+  Object.keys(answers).forEach(k=>delete answers[k]);
+  document.getElementById('bizName').value='';
+  document.getElementById('assessDate').value='';
+  document.getElementById('report').style.display='none';
+  document.getElementById('checklist').style.display='block';
+  refreshPills();
+  refreshMeter();
+}
+
+function bandFor(pct){
+  if(pct>=80) return {label:'Mature', cls:'band-mature'};
+  if(pct>=50) return {label:'Developing', cls:'band-developing'};
+  return {label:'At Risk', cls:'band-atrisk'};
+}
+
+function generateReport(){
+  const biz = document.getElementById('bizName').value || 'Unnamed business';
+  const date = document.getElementById('assessDate').value || new Date().toISOString().slice(0,10);
+
+  let total=0;
+  controls.forEach(c=>{ total += scoreOf(answers[c.id]); });
+  const pct = Math.round((total/(controls.length*2))*100);
+  const band = bandFor(pct);
+
+  let catHtml = '';
+  categories.forEach(cat=>{
+    const items = controls.filter(c=>c.category===cat);
+    const sum = items.reduce((s,c)=>s+scoreOf(answers[c.id]),0);
+    const catPct = Math.round((sum/(items.length*2))*100);
+    const barColor = catPct>=80 ? 'var(--safe)' : catPct>=50 ? 'var(--warn)' : 'var(--risk)';
+    catHtml += `
+      <div class="cat-bar-row">
+        <div class="top"><span>${cat}</span><span class="mono">${catPct}%</span></div>
+        <div class="bar-track"><div class="bar-fill" style="width:${catPct}%; background:${barColor};"></div></div>
+      </div>`;
+  });
+
+  const gaps = controls.filter(c=>answers[c.id] !== 'yes')
+    .sort((a,b)=>{
+      const w = catWeight[a.category]-catWeight[b.category];
+      if(w!==0) return w;
+      return scoreOf(answers[a.id]) - scoreOf(answers[b.id]);
+    });
+
+  let rmdHtml = gaps.length ? '' : '<p class="generate-note">No open gaps — every control is fully met.</p>';
+  gaps.forEach(c=>{
+    const st = answers[c.id]==='no' ? 'no' : 'partial';
+    rmdHtml += `
+      <div class="rmd-item">
+        <div class="code">${c.id}</div>
+        <div>
+          <div>${c.text} <span class="status status-${st}">${st}</span></div>
+          <div class="rmd-fix">${c.fix}</div>
+        </div>
+      </div>`;
+  });
+
+  document.getElementById('report').innerHTML = `
+    <div class="report-head">
+      <div>
+        <div class="eyebrow mono" style="color:var(--muted); font-size:12px;">COMPLIANCE ASSESSMENT REPORT</div>
+        <h2 style="font-size:24px; margin-top:4px;">${biz}</h2>
+        <div style="color:var(--muted); font-size:13px; margin-top:2px;">${date} · CIS Controls v8, IG1</div>
+        <span class="band-badge ${band.cls}">${band.label}</span>
+      </div>
+      <div class="overall-score">${pct}%</div>
+    </div>
+    <div class="cat-bars">${catHtml}</div>
+    <div class="roadmap">
+      <h3>Prioritized remediation roadmap</h3>
+      ${rmdHtml}
+    </div>
+    <div class="report-actions">
+      <button onclick="window.print()">Print / export as PDF</button>
+      <button onclick="backToChecklist()">Back to checklist</button>
+    </div>
+  `;
+  document.getElementById('report').style.display='block';
+  document.getElementById('checklist').style.display='none';
+  document.querySelector('.generate-bar').style.display='none';
+  window.scrollTo(0,0);
+}
+
+function backToChecklist(){
+  document.getElementById('report').style.display='none';
+  document.getElementById('checklist').style.display='block';
+  document.querySelector('.generate-bar').style.display='flex';
+}
+
+renderChecklist();
+refreshMeter();
+</script>
+
+</body>
+</html>
