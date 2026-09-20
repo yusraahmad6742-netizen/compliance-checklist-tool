@@ -47,8 +47,8 @@ Screenshots below:
 
 ## Challenges & How I Solved Them
 
-- [e.g. "Deciding how to weight remediation priority — solved by sorting gaps by category risk (Access Control and Backup first) rather than just raw score."]
-- [Add 1–2 more from your own build process]
+-JavaScript syntax error from an escaped apostrophe — a string in the code ("a person's last day") had an incorrectly escaped quote, which silently broke the whole script. Fixed by correcting the escape sequence and testing the file in a browser before considering it done.
+-GitHub Pages showing a file listing instead of the live tool — Pages requires the entry file to be named exactly index.html at the repo root; the uploaded file kept its original name. Fixed by renaming the file directly in GitHub's file editor and adding a .nojekyll file so GitHub doesn't run it through Jekyll processing.
 
 ## Future Improvements
 
